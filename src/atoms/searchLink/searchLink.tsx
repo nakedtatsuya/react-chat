@@ -1,9 +1,9 @@
 import React from 'react';
-
+const classes = require('./searchLink.css');
 
 const searchLink = () => {
     return (
-        <a className={''} href={'#'}>
+        <a className={classes.SearchLink} href={'#'}>
             ユーザーを探す
         </a>
     )

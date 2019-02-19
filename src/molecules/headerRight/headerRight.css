@@ -1,0 +1,16 @@
+.HeaderRight {
+    float: right;
+    line-height: 50px;
+    padding-right: 30px;
+}
+
+.HeaderRightListUl {
+    border-bottom: 1px solid #ddd;
+}
+
+.HeaderRightListLi {
+    float: left;
+    margin-bottom: -1px;
+    position: relative;
+    display: block;
+}
