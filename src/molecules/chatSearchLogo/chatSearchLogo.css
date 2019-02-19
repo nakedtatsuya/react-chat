@@ -1,35 +1,36 @@
 .ChatSearchLogo {
-
+    margin-top: 115px;
 }
 
 .ChatSearchLogo span {
-
+    font-size: 80px;
+    font-weight: 500;
 }
 
 .LogoC {
-
+    color: #4285f4;
 }
 
 .LogoH {
-
+    color: #ea4335;
 }
 
 .LogoA {
-
+    color: #fbbc05;
 }
 
 .LogoT {
-
+    color: #4285f4;
 }
 
 .LogoA2 {
-
+    color: #34a853;
 }
 
 .LogoP {
-
+    color: #ea4335;
 }
 
 .LogoP2 {
-
+    color: #fbbc05;
 }

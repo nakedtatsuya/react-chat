@@ -4,7 +4,7 @@ const classes = require('./searchInput.css');
 const searchInput = () => {
     return (
         <>
-            <input type="text" class="search_form" value="" placeholder="ユーザー名で検索しよう">
+            <input type="text" className={classes.SearchInput} value="" placeholder="ユーザー名で検索しよう" />
         </>
     )
 };

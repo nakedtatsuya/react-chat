@@ -1,0 +1,38 @@
+.SearchUserList {
+    padding-top: 1px;
+    font-size: 16px;
+    width: 35%;
+    margin-left: auto;
+    margin-right: auto;
+    border-left: 1px solid #ccc;
+    border-right: 1px solid #ccc;
+    border-bottom: 1px solid #ccc;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    margin-top: 0;
+    margin-bottom: 10px;
+}
+
+.SearchUserListItem {
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    font-size: 16px;
+}
+
+.SearchUserListResult {
+    cursor: pointer;
+    text-align: left;
+    border-bottom: 1px solid #ccc;
+    padding: 10px 5px;
+    line-height: 40px;
+}
+
+.SearchUserListResult img {
+    border-radius: 50%;
+    width: 40px;
+    margin-right: 10px;
+    vertical-align: middle;
+}
+
+.SearchUserListResult span {
+
+}

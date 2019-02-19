@@ -3,6 +3,8 @@ const classes = require('./App.css');
 import Header from './organisms/header/header';
 import axios from './axios-order';
 import Chat from './pages/chat/chat';
+import Search from './pages/search/search';
+const { Route, Switch } = require('react-router-dom');
 
 class App extends Component {
 
@@ -26,7 +28,10 @@ class App extends Component {
     return (
       <div className={classes.App}>
           <Header />
-          <Chat />
+          <Switch>
+              <Route path="/search" component={Search} />
+              <Route path="/" exact component={Chat} />
+          </Switch>
           {/*{this.state.users.map((user: {name: string, email: string}) => {*/}
               {/*return (*/}
                   {/*<div>*/}
@@ -35,6 +40,7 @@ class App extends Component {
                   {/*</div>*/}
               {/*);*/}
           {/*})}*/}
+
       </div>
     );
   }
