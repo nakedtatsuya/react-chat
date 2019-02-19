@@ -27,14 +27,14 @@ class App extends Component {
       <div className={classes.App}>
           <Header />
           <Chat />
-          {this.state.users.map((user: {name: string, email: string}) => {
-              return (
-                  <div>
-                    <h1>{user.name}</h1>
-                    <p>{user.email}</p>
-                  </div>
-              );
-          })}
+          {/*{this.state.users.map((user: {name: string, email: string}) => {*/}
+              {/*return (*/}
+                  {/*<div>*/}
+                    {/*<h1>{user.name}</h1>*/}
+                    {/*<p>{user.email}</p>*/}
+                  {/*</div>*/}
+              {/*);*/}
+          {/*})}*/}
       </div>
     );
   }
