@@ -1,8 +1,26 @@
 import React, { Component } from 'react';
 import logo from './logo.svg';
 import './App.css';
+import axios from './axios-order';
 
 class App extends Component {
+
+  state = {
+            users: []
+        };
+
+    componentDidMount() {
+        axios.get('/users')
+            .then((results) => {
+                console.log(results);
+                this.setState({users: results.data})
+            })
+            .catch((data) =>{
+                console.log(data);
+            })
+    }
+
+
   render() {
     return (
       <div className="App">
@@ -17,7 +35,15 @@ class App extends Component {
             target="_blank"
             rel="noopener noreferrer"
           >
-            Learn React
+              {this.state.users.map((user: {name: string, email: string}) => {
+
+                  return (
+                      <div>
+                        <h1>{user.name}</h1>
+                        <p>{user.email}</p>
+                      </div>
+                  );
+              })}
           </a>
         </header>
       </div>
