@@ -1,0 +1,9 @@
+.RemoveButton {
+    background: rgba(0,0,0,0.01);
+    -webkit-appearance: button;
+    cursor: pointer;
+    color: #d9534f;
+    float: right;
+    margin-top: -10px;
+    border: 0;
+}
