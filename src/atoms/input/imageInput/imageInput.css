@@ -1,0 +1,11 @@
+.ImageInput {
+    padding-top: 15px;
+    text-align: left;
+}
+
+.ImageInput img {
+    float: left;
+    padding-top: 10px;
+    width: 21%;
+    display: block;
+}

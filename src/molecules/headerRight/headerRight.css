@@ -13,4 +13,12 @@
     margin-bottom: -1px;
     position: relative;
     display: block;
+    padding-right: 3px;
+    height: 50px;
+}
+
+.HeaderRightListLi a {
+    height: 50px;
+    line-height: 50px;
+    padding: 0 15px;
 }

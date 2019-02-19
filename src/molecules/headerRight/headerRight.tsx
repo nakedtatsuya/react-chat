@@ -13,7 +13,9 @@ const headerRight = () => {
                     <MyPageLink />
                     <UserModal />
                 </li>
+                <div style={{clear: 'both'}}></div>
             </ul>
+            <div style={{clear: 'both'}}></div>
         </div>
     )
 };
