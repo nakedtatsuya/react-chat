@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import logo from './logo.svg';
 import './App.css';
+import Header from './organisms/header/header';
 import axios from './axios-order';
 
 class App extends Component {
@@ -24,6 +25,7 @@ class App extends Component {
   render() {
     return (
       <div className="App">
+          <Header />
         <header className="App-header">
           <img src={logo} className="App-logo" alt="logo" />
           <p>
