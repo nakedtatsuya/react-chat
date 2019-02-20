@@ -1,0 +1,10 @@
+
+.ImageWrapper {
+    display: inline-block;
+    width: 50%;
+}
+
+.ImageWrapper img {
+    width: 100%;
+    height: auto;
+}
