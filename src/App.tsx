@@ -4,6 +4,7 @@ import axios from './axios-order';
 import Chat from './pages/chat/chat';
 import Search from './pages/search/search';
 import User from "./pages/user/user";
+import Home from "./pages/home/home";
 const { Route, Switch } = require('react-router-dom');
 
 class App extends Component {
@@ -30,6 +31,7 @@ class App extends Component {
           <Switch>
               <Route path="/search" exact component={Search} />
               <Route path="/users" component={User} />
+              <Route path="/home" component={Home} />
               <Route path="/" component={Chat} />
           </Switch>
           {/*{this.state.users.map((user: {name: string, email: string}) => {*/}

@@ -47,3 +47,22 @@
     border-color: #d43f3a;
     width: 100%;
 }
+
+.Login {
+    margin-bottom: 15px;
+}
+
+.Login button {
+    color: #fff;
+    background-color: #5bc0de;
+    border-color: #46b8da;
+    width: 100%;
+}
+
+.NewPassword button {
+    -webkit-appearance: button;
+    cursor: pointer;
+    color: #fff;
+    background-color: #5bc0de;
+    border-color: #46b8da;
+}
