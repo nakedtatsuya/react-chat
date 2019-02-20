@@ -1,0 +1,20 @@
+.UserProfile {
+    width: 30%;
+    border: 1px solid #fff;
+    background: #fafafa;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 65px;
+    border-radius: 4px;
+    margin-top: 100px;
+    text-align: center;
+}
+
+.UserProfileName {
+    padding-bottom: 10px;
+    font-size: 18px;
+}
+
+.UserProfileEmail {
+    font-size: 18px;
+}

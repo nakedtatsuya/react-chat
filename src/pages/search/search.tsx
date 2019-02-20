@@ -1,16 +1,27 @@
 import React, { Component } from 'react';
 const classes = require('./search.css');
+import SearchInput from '../../atoms/input/searchInput/searchInput';
+import SearchUserList from '../../organisms/searchUserList/searchUserList';
+import ChatSearchLogo from '../../molecules/chatSearchLogo/chatSearchLogo';
+import Header from '../../organisms/header/header';
+
 
 class Search extends Component {
     render() {
         return (
-            <div id="react-main">
-                <div class="search" data-reactid=".0">
-
-                    <input type="text" class="search_form" value="" placeholder="ユーザー名で検索しよう">
-                    <ul className={classes.SearchUserList}></ul>
+            <>
+                <Header/>
+                <div id={classes.SearchContainer}>
+                    <div className={classes.Search}>
+                        <ChatSearchLogo />
+                        <SearchInput />
+                        <SearchUserList
+                            name={''}
+                            imageURL={''}
+                        />
+                    </div>
                 </div>
-            </div>
+            </>
         );
     }
 }

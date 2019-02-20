@@ -1,14 +1,18 @@
 import React, { Component } from 'react';
 import UserList from '../../organisms/userList/userList';
 import MessageBox from '../../organisms/messageBox/messageBox';
+import Header from '../../organisms/header/header';
 
 class Chat extends Component {
     render() {
         return (
-            <div>
-                <UserList  />
-                <MessageBox />
-            </div>
+            <>
+                <Header />
+                <div>
+                    <UserList  />
+                    <MessageBox />
+                </div>
+            </>
         )
     }
 }
