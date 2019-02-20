@@ -1,9 +1,11 @@
 import React from 'react';
+const {Link} = require('react-router-dom');
+const classes = require('./logo.css');
 
 const Logo = () => {
     return (
-        <div>
-            <a href={'#'}>ChatApp</a>
+        <div className={classes.Logo}>
+            <Link to={'/'} >ChatApp</Link>
         </div>
     )
 };
