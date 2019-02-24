@@ -3,9 +3,10 @@ import MyPageLink from '../../atoms/myPageLink/myPageLink';
 import SearchLink from '../../atoms/searchLink/searchLink';
 import UserModal from '../userModal/userModal';
 const classes = require('./headerRight.css');
+import AuthAction from '../../modules/auth/authAction';
 
 interface State {}
-class headerRight extends Component {
+class headerRight extends Component<any, any> {
 
     state = {
       isModalShow: false
@@ -14,7 +15,7 @@ class headerRight extends Component {
 
     userModalHandler = () => {
         this.setState({isModalShow: !this.state.isModalShow});
-        console.log(this.state.isModalShow);
+
     };
 
     render(){
@@ -23,8 +24,8 @@ class headerRight extends Component {
                 <ul className={classes.HeaderRightListUl}>
                     <li className={classes.HeaderRightListLi}><SearchLink /></li>
                     <li className={classes.HeaderRightListLi}>
-                        <MyPageLink click={this.userModalHandler} show={this.state.isModalShow} />
-                        <UserModal show={this.state.isModalShow} />
+                        <MyPageLink name={this.props.name} click={this.userModalHandler} show={this.state.isModalShow} />
+                        <UserModal click={AuthAction.logout} show={this.state.isModalShow} id={this.props.uid} />
                     </li>
                     <div style={{clear: 'both'}}></div>
                 </ul>

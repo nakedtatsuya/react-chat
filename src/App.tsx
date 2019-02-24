@@ -5,44 +5,56 @@ import Chat from './pages/chat/chat';
 import Search from './pages/search/search';
 import User from "./pages/user/user";
 import Home from "./pages/home/home";
-const { Route, Switch } = require('react-router-dom');
+const { Route, Switch, withRouter, Redirect } = require('react-router-dom');
+import FluxContainer from "./fluxContainer";
+import AuthAction from './modules/auth/authAction';
+import Spinner from './atoms/Spinner/Spinner';
 
-class App extends Component {
-
-  state = {
-            users: []
-        };
-
-    componentDidMount() {
-        axios.get('/users')
-            .then((results) => {
-                console.log(results);
-                this.setState({users: results.data})
-            })
-            .catch((data) =>{
-                console.log(data);
-            })
-    }
-
+class App extends Component<any, any> {
 
   render() {
+
+      if(this.props.auth.loading) {
+          return (
+              <div className={classes.App}>
+                  <Spinner />
+              </div>
+          );
+      }
+
+      let routes = null;
+
+      if(this.props.auth.isLoggedIn) {
+          routes = (
+              <Switch>
+                  <Route path="/search" exact render={({match}: any) => (
+                      <Search {...this.props} match={match} />
+                  )}/>
+                  <Route path="/users" render={({match}: any) => (
+                      <User {...this.props} match={match} />
+                  )}/>
+                  <Route path="/" exact render={({match}: any) => (
+                      <Chat {...this.props} match={match} />
+                  )}/>
+                  <Redirect to={'/'} />
+              </Switch>
+          );
+      }
+
+      if(!this.props.auth.isLoggedIn) {
+          routes = (
+              <Switch>
+                  <Route path="/home" render={({match}: any) => (
+                      <Home {...this.props} match={match} />
+                  )}/>
+                  <Redirect to={'/home/login'} />
+              </Switch>
+          );
+      }
+
     return (
       <div className={classes.App}>
-          <Switch>
-              <Route path="/search" exact component={Search} />
-              <Route path="/users" component={User} />
-              <Route path="/home" component={Home} />
-              <Route path="/" component={Chat} />
-          </Switch>
-          {/*{this.state.users.map((user: {name: string, email: string}) => {*/}
-              {/*return (*/}
-                  {/*<div>*/}
-                    {/*<h1>{user.name}</h1>*/}
-                    {/*<p>{user.email}</p>*/}
-                  {/*</div>*/}
-              {/*);*/}
-          {/*})}*/}
-
+          {routes}
       </div>
     );
   }

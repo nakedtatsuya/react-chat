@@ -2,7 +2,7 @@
     text-rendering: optimizeLegibility;
 }
 
-.MessageBoxList {
+.MessageBoxUl {
     position: absolute;
     top: 50px;
     left: 300px;
@@ -14,18 +14,31 @@
     margin-bottom: 10px;
 }
 
-.MessageBoxItem {
+.MessageBoxLi {
+    display: list-item;
+    text-align: -webkit-match-parent;
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
 }
 
 .MessageBoxItemContent {
-    float: right;
-    background: #218CB9;
+    
     color: #fff;
     font-size: 14px;
     font-weight: 400;
     border-radius: 10px;
     padding: 10px 15px;
     margin-bottom: 10px;
+}
+
+.FloatRight {
+    background: #218CB9;
+    float: right;
+}
+
+.FloatLeft {
+    background: #fff;
+    border: 1px solid #000;
+    color: #000;
+    float: left;
 }

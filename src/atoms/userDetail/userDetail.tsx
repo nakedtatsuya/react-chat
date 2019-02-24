@@ -1,13 +1,14 @@
 import React from 'react';
 const classes = require('./userDetail.css');
+const { Link } = require('react-router-dom');
 
-const userDetail = (props: {url: string}) => {
+const userDetail = (props: {name: string, id: number}) => {
     return (
         <div className={classes.UserDetail} >
             <div className={classes.UserNameBox} >
-                <a href={props.url} className={classes.UserName}>
-                    sample
-                </a>
+                <Link to={`/users/${props.id}`} className={classes.UserName}>
+                    {props.name}
+                </Link>
             </div>
         </div>
     );

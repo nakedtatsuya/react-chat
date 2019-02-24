@@ -1,20 +1,15 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-const { BrowserRouter } = require('react-router-dom');
 
-
+import { Container } from 'flux/utils';
+import FluxContainer from './fluxContainer';
 import './index.css';
-import App from './App';
 import * as serviceWorker from './serviceWorker';
 
-const app = (
-    <BrowserRouter>
-        <App />
-    </BrowserRouter>
-);
 
-ReactDOM.render(app, document.getElementById('root'));
+const AppContainer = Container.create(FluxContainer);
 
+ReactDOM.render(<AppContainer />, document.getElementById('root'));
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.
 // Learn more about service workers: http://bit.ly/CRA-PWA

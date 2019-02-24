@@ -1,13 +1,15 @@
 import React from 'react';
 const classes = require('./replyBox.css');
-import ReplyInput from '../../atoms/input/replyInput/replyInput';
-import ImageInput from '../../atoms/input/imageInput/imageInput';
 
-const replyBox = () => {
+const replyBox = (props: any) => {
     return (
         <div className={classes.ReplyBox}>
-            <ReplyInput />
-            <ImageInput />
+            <form onSubmit={props.formHandler}>
+                <input value={props.value} onChange={props.inputHandler} className={classes.ReplyInput} placeholder="Type message to reply.." />
+                <div className={classes.ImageInput}>
+                    <input type="file" />
+                </div>
+            </form>
         </div>
     );
 };

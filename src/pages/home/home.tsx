@@ -1,33 +1,23 @@
 import React, { Component } from 'react';
 const { Route, Switch } = require('react-router-dom');
 const classes = require('./home.css');
-import LoginForm from '../../organisms/homeFormBox/loginForm/loginForm';
-import SignupForm from '../../organisms/homeFormBox/signupForm/signupForm';
-import NewPassword from '../../organisms/homeFormBox/newPassword/newPassword';
+import LoginForm from '../../organisms/FormBox/loginForm/loginForm';
+import SignupForm from '../../organisms/FormBox/signupForm/signupForm';
+import NewPassword from '../../organisms/FormBox/newPassword/newPassword';
+const { Link, withRouter } = require('react-router-dom');
 
-
-import HomeImage from '../../atoms/homeImage/homeImage';
-import User from "../user/user";
-import Search from "../search/search";
-import Chat from "../chat/chat";
-
-class Login extends Component {
-
-    state = {
-      isLogin: false
-    };
+class Login extends Component<any, any> {
 
     render() {
-
-
-        const isLogin = false;
-
-
         return (
             <>
                 <Switch>
-                    <Route path="/home/login" exact component={LoginForm} />
-                    <Route path="/home/sign_up" exact component={SignupForm} />
+                    <Route path="/home/login" exact render={() => (
+                        <LoginForm {...this.props} />
+                    )} />
+                    <Route path="/home/sign_up" exact render={() => (
+                        <SignupForm {...this.props} />
+                    )} />
                     <Route path="/home/password/new" exact component={NewPassword} />
                 </Switch>
             </>
@@ -35,4 +25,4 @@ class Login extends Component {
     }
 }
 
-export default Login;
+export default withRouter(Login);

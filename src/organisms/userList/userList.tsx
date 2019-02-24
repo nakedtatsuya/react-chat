@@ -1,18 +1,30 @@
-import React, { Component } from 'react';
+import React from 'react';
 import UserListItem from '../../molecules/userListItem/userListItem';
 const classes = require('./userList.css');
 
 
-class UserList extends Component {
-    render() {
+const UserList = (props: {change: any, userList: any, click: any, activeUser: number}) => {
+
+    const users = props.userList.map((user: any) => {
         return (
-            <div className={classes.UserList}>
-                <ul className={classes.UserListUl}>
-                    <UserListItem url={'#'} />
-                </ul>
-            </div>
-        )
-    }
-}
+            <UserListItem
+                activeUser={props.activeUser}
+                click={props.click}
+                key={user.id}
+                name={user.name}
+                id={user.id}
+                change={props.change}
+            />
+        );
+    });
+
+    return (
+        <div className={classes.UserList}>
+            <ul className={classes.UserListUl}>
+                {users}
+            </ul>
+        </div>
+    )
+};
 
 export default UserList;
