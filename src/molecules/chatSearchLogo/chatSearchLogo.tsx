@@ -1,6 +1,7 @@
 import React from 'react';
 const classes = require('./chatSearchLogo.css');
 
+//Googleチックなロゴ
 const chatSearchLogo = () => {
 
     return (

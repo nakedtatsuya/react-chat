@@ -1,66 +1,24 @@
 import React, {Component, FormEvent} from 'react';
 import Button from "../../../atoms/button/Button/Button";
-import AuthAction from "../../../modules/auth/authAction";
+import {checkValidity, emailConfig} from "../../../modules/utility";
 const classes = require('./newPassword.css');
 const button = require('../../../atoms/button/Button/Button.css');
 const { Link, withRouter } = require('react-router-dom');
 import Input from "../../../atoms/input/Input";
-import Spinner from '../../../atoms/Spinner/Spinner';
 import axios from "../../../axios-order";
-import FluxContainer from "../../../fluxContainer";
 
-
+/**
+ * パスワードリセット
+ * メール処理アクションをrailsで実装していないので動かない
+ */
 class newPassword extends Component<any, any> {
 
     state: any = {
         newPasswordForm: {
-            email: {
-                elementType: 'input',
-                elementConfig: {
-                    placeholder: 'メールアドレス',
-                    type: 'email',
-                    required: true,
-                    autoFocus: true
-                },
-                value: '',
-                validation: {
-                    required: true,
-                    isEmail: true,
-                    maxLength: 255,
-                    minLength: 1
-                },
-                valid: false,
-                touched: false
-            },
+            email: emailConfig(),
+        },
         formIsValid: false
-        }
     };
-
-    checkValidity(value: string, rules: any) {
-        let isValid = true;
-        if (!rules) {
-            return true;
-        }
-
-        if (rules.required) {
-            isValid = value.trim() !== '' && isValid;
-        }
-
-        if (rules.minLength) {
-            isValid = value.length >= rules.minLength && isValid
-        }
-
-        if (rules.maxLength) {
-            isValid = value.length <= rules.maxLength && isValid
-        }
-
-        if (rules.isEmail) {
-            const pattern = /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/;
-            isValid = pattern.test(value) && isValid
-        }
-
-        return isValid;
-    }
 
     submitHandler = ( event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
@@ -69,10 +27,10 @@ class newPassword extends Component<any, any> {
             redirect_url: "http://localhost:3000"
         };
         axios.post( '/auth/password', formData )
-            .then( response => {
+            .then( (response: any) => {
                 console.log(response);
             })
-            .catch( error => {
+            .catch( (error: any) => {
                 console.log(error);
             });
     };
@@ -84,15 +42,11 @@ class newPassword extends Component<any, any> {
                     ...this.state.newPasswordForm[controlName],
                     touched: true,
                     value: event.target.value,
-                    valid: this.checkValidity(event.target.value, this.state.newPasswordForm[controlName].validation)
+                    valid: checkValidity(event.target.value, this.state.newPasswordForm[controlName].validation)
                 }
             };
             this.setState({newPasswordForm: updateControls})
     };
-
-    componentDidMount() {
-        AuthAction.authEnd();
-    }
 
     render() {
         let form: any = (

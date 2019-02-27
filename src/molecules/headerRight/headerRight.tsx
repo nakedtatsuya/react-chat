@@ -3,16 +3,18 @@ import MyPageLink from '../../atoms/myPageLink/myPageLink';
 import SearchLink from '../../atoms/searchLink/searchLink';
 import UserModal from '../userModal/userModal';
 const classes = require('./headerRight.css');
-import AuthAction from '../../modules/auth/authAction';
+import AuthDispatcher from "../../modules/auth/authAction";
 
-interface State {}
+/**
+ * サーチユーザーリンクとモーダルリンク
+ */
 class headerRight extends Component<any, any> {
 
     state = {
       isModalShow: false
     };
 
-
+    //モーダル表示・非表示切り替え
     userModalHandler = () => {
         this.setState({isModalShow: !this.state.isModalShow});
 
@@ -25,7 +27,7 @@ class headerRight extends Component<any, any> {
                     <li className={classes.HeaderRightListLi}><SearchLink /></li>
                     <li className={classes.HeaderRightListLi}>
                         <MyPageLink name={this.props.name} click={this.userModalHandler} show={this.state.isModalShow} />
-                        <UserModal click={AuthAction.logout} show={this.state.isModalShow} id={this.props.uid} />
+                        <UserModal click={AuthDispatcher.logout} show={this.state.isModalShow} id={this.props.uid} />
                     </li>
                     <div style={{clear: 'both'}}></div>
                 </ul>

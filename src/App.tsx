@@ -1,20 +1,19 @@
 import React, { Component } from 'react';
 const classes = require('./App.css');
-import axios from './axios-order';
 import Chat from './pages/chat/chat';
 import Search from './pages/search/search';
 import User from "./pages/user/user";
 import Home from "./pages/home/home";
-const { Route, Switch, withRouter, Redirect } = require('react-router-dom');
-import FluxContainer from "./fluxContainer";
-import AuthAction from './modules/auth/authAction';
+const { Route, Switch, Redirect } = require('react-router-dom');
 import Spinner from './atoms/Spinner/Spinner';
 
 class App extends Component<any, any> {
 
-  render() {
+  render(){
 
-      if(this.props.auth.loading) {
+      const {loading, isLoggedIn} = this.props.auth;
+        //認証ロード中はスピナー表示
+      if(loading) {
           return (
               <div className={classes.App}>
                   <Spinner />
@@ -23,14 +22,14 @@ class App extends Component<any, any> {
       }
 
       let routes = null;
-
-      if(this.props.auth.isLoggedIn) {
+    //ログイン済みならコンテンツページへ
+      if(isLoggedIn) {
           routes = (
               <Switch>
                   <Route path="/search" exact render={({match}: any) => (
                       <Search {...this.props} match={match} />
                   )}/>
-                  <Route path="/users" render={({match}: any) => (
+                  <Route path="/users/:id" render={({match}: any) => (
                       <User {...this.props} match={match} />
                   )}/>
                   <Route path="/" exact render={({match}: any) => (
@@ -40,8 +39,8 @@ class App extends Component<any, any> {
               </Switch>
           );
       }
-
-      if(!this.props.auth.isLoggedIn) {
+    //ログインしていないならloginページへ
+      if(!isLoggedIn) {
           routes = (
               <Switch>
                   <Route path="/home" render={({match}: any) => (

@@ -2,10 +2,21 @@ import React from 'react';
 import UserListItem from '../../molecules/userListItem/userListItem';
 const classes = require('./userList.css');
 
-
-const UserList = (props: {change: any, userList: any, click: any, activeUser: number}) => {
+/**
+ * 友達リスト
+ * @param {{change: any; userList: any; click: any; activeUser: number}} props
+ * @returns {any}
+ * @constructor
+ */
+const UserList = (props: {userList: any, click: any, activeUser: number}) => {
 
     const users = props.userList.map((user: any) => {
+        //画像設定があるかチェック
+        let imageURL = null;
+        if(user.image !== null){
+            imageURL = user.image.url;
+        }
+
         return (
             <UserListItem
                 activeUser={props.activeUser}
@@ -13,7 +24,8 @@ const UserList = (props: {change: any, userList: any, click: any, activeUser: nu
                 key={user.id}
                 name={user.name}
                 id={user.id}
-                change={props.change}
+                isRead={user.isRead}
+                image={imageURL}
             />
         );
     });
@@ -24,7 +36,7 @@ const UserList = (props: {change: any, userList: any, click: any, activeUser: nu
                 {users}
             </ul>
         </div>
-    )
+    );
 };
 
 export default UserList;

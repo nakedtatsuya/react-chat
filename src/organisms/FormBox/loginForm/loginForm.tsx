@@ -6,9 +6,8 @@ const { Link, withRouter } = require('react-router-dom');
 import HomeImage from '../../../atoms/homeImage/homeImage';
 import Input from "../../../atoms/input/Input";
 import Spinner from '../../../atoms/Spinner/Spinner';
-
-import AuthAction from '../../../modules/auth/authAction';
-import FluxContainer from "../../../fluxContainer";
+import AuthDispatcher from "../../../modules/auth/authAction";
+import {checkValidity, emailConfig, passwordConfig} from '../../../modules/utility';
 
 
 interface LoginForm {
@@ -37,12 +36,6 @@ interface ControlConfig {
     touched: boolean
 }
 
-interface Props {
-    history: {
-        push(url: string): void;
-    };
-}
-
 interface SubmitConfig {
     email: string,
     password: string
@@ -56,74 +49,19 @@ const isProperty = (value: string): value is (keyof LoginForm) => {
     return value === 'email' || value === 'password';
 };
 
+/**
+ * ログインフォーム
+ */
 class loginForm extends Component<any, State> {
+
     state: State = {
         loginForm: {
-            email: {
-                elementType: 'input',
-                elementConfig: {
-                    placeholder: 'メールアドレス',
-                    type: 'email',
-                    required: true,
-                    autoFocus: true
-                },
-                value: '',
-                validation: {
-                    required: true,
-                    isEmail: true,
-                    maxLength: 255,
-                    minLength: 1
-                },
-                valid: false,
-                touched: false
-            },
-            password: {
-                elementType: 'input',
-                elementConfig: {
-                    placeholder: 'パスワード',
-                    type: 'password',
-                    required: true
-                },
-                value: '',
-                validation: {
-                    required: true,
-                    isEmail: false,
-                    minLength: 8,
-                    maxLength: 16
-                },
-                valid: false,
-                touched: false
-            }
+            email: emailConfig(),
+            password: passwordConfig('パスワード')
         },
         formIsValid: false,
         loading: false
     };
-
-    checkValidity(value: string, rules: Validation) {
-        let isValid = true;
-        if (!rules) {
-            return true;
-        }
-
-        if (rules.required) {
-            isValid = value.trim() !== '' && isValid;
-        }
-
-        if (rules.minLength) {
-            isValid = value.length >= rules.minLength && isValid
-        }
-
-        if (rules.maxLength) {
-            isValid = value.length <= rules.maxLength && isValid
-        }
-
-        if (rules.isEmail) {
-            const pattern = /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/;
-            isValid = pattern.test(value) && isValid
-        }
-
-        return isValid;
-    }
 
     /**
      * ログインアクション
@@ -137,9 +75,14 @@ class loginForm extends Component<any, State> {
                 formData[formElementIdentifier] = this.state.loginForm[formElementIdentifier].value;
             }
         }
-        AuthAction.auth(formData.email, formData.password);
+        AuthDispatcher.auth(formData.email, formData.password);
     };
 
+    /**
+     * 入力ごとのアクション
+     * @param {HTMLElementEvent<HTMLInputElement>} event
+     * @param {string} controlName
+     */
     inputChangeHandler = (event: HTMLElementEvent<HTMLInputElement>, controlName: string) => {
         if (isProperty(controlName)) {
             const updateControls = {
@@ -148,7 +91,7 @@ class loginForm extends Component<any, State> {
                     ...this.state.loginForm[controlName],
                     touched: true,
                     value: event.target.value,
-                    valid: this.checkValidity(event.target.value, this.state.loginForm[controlName].validation)
+                    valid: checkValidity(event.target.value, this.state.loginForm[controlName].validation)
                 }
             };
             this.setState({loginForm: updateControls});
@@ -185,7 +128,7 @@ class loginForm extends Component<any, State> {
         if (this.props.auth.loading) {
             form = <Spinner />;
         }
-
+        //errorメッセージがある時は表示
         let errorMessage = null;
 
         if (this.props.auth.error) {

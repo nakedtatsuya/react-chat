@@ -1,12 +1,15 @@
 import React, { Component } from 'react';
 const { Route, Switch } = require('react-router-dom');
-const classes = require('./home.css');
 import LoginForm from '../../organisms/FormBox/loginForm/loginForm';
 import SignupForm from '../../organisms/FormBox/signupForm/signupForm';
 import NewPassword from '../../organisms/FormBox/newPassword/newPassword';
-const { Link, withRouter } = require('react-router-dom');
+const { withRouter } = require('react-router-dom');
 
-class Login extends Component<any, any> {
+/**
+ * 未認証時のコンテナー
+ * login, signup, passwordリセット画面
+ */
+class Home extends Component<any, any> {
 
     render() {
         return (
@@ -25,4 +28,4 @@ class Login extends Component<any, any> {
     }
 }
 
-export default withRouter(Login);
+export default withRouter(Home);

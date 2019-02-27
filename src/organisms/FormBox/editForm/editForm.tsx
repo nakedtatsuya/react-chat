@@ -3,19 +3,15 @@ import Button from "../../../atoms/button/Button/Button";
 const classes = require('./editForm.css');
 const button = require('../../../atoms/button/Button/Button.css');
 import Input from "../../../atoms/input/Input";
-import AuthAction from "../../../modules/auth/authAction";
+import AuthDispatcher from "../../../modules/auth/authAction";
 import axios from '../../../axios-order';
-
+import {checkValidity, emailConfig, nameConfig, passwordConfig} from '../../../modules/utility';
 
 interface editForm {
     name: ControlConfig,
     email: ControlConfig,
     password: ControlConfig,
     password_confirmation: ControlConfig
-}
-interface State {
-    signUpForm: editForm,
-    formIsValid: boolean
 }
 
 interface Validation {
@@ -34,129 +30,32 @@ interface ControlConfig {
     touched: boolean
 }
 
-interface SubmitConfig {
-    name: string,
-    email: string,
-    password: string,
-    password_confirmation: string,
-}
-
 interface HTMLElementEvent<T extends HTMLElement> extends Event {
     target: T;
 }
 const isProperty = (value: string): value is (keyof editForm) => {
     return value === 'name' || value === 'email' || value === 'password' || value === 'password_confirmation';
 };
+
+/**
+ * ユーザー編集フォーム
+ */
 class editForm extends Component<any, any> {
 
     state: any = {
         editForm: {
-            name: {
-                elementType: 'input',
-                elementConfig: {
-                    placeholder: 'ユーザー名',
-                    type: 'text',
-                    maxLength: "20",
-                    required: true,
-                    autoFocus: true
-                },
-                value: this.props.auth.currentUser.name,
-                validation: {
-                    required: true,
-                    isEmail: false,
-                    minLength: 1,
-                    maxLength: 20
-                },
-                valid: false,
-                touched: false
-            },
-            email: {
-                elementType: 'input',
-                elementConfig: {
-                    placeholder: 'メールアドレス',
-                    type: 'email',
-                    required: true,
-                    maxLength: "255"
-                },
-                value: this.props.auth.currentUser.email,
-                validation: {
-                    required: true,
-                    isEmail: true,
-                    minLength: 1,
-                    maxLength: 255
-                },
-                valid: false,
-                touched: false
-            },
-            password: {
-                elementType: 'input',
-                elementConfig: {
-                    placeholder: '新しいパスワード',
-                    type: 'password',
-                    required: false,
-                    maxLength: '16',
-                    minLength: '0'
-                },
-                value: '',
-                validation: {
-                    required: true,
-                    isEmail: false,
-                    minLength: 8,
-                    maxLength: 16
-                },
-                valid: false,
-                touched: false
-            },
-            password_confirmation: {
-                elementType: 'input',
-                elementConfig: {
-                    placeholder: '新しいパスワードの確認',
-                    type: 'password',
-                    required: false,
-                    maxLength: "16",
-                    minLength: '0'
-                },
-                value: '',
-                validation: {
-                    required: true,
-                    isEmail: false,
-                    minLength: 8,
-                    maxLength: 16
-                },
-                valid: false,
-                touched: false
-            }
+            name: nameConfig(this.props.auth.currentUser.name),
+            email: emailConfig(this.props.auth.currentUser.email),
+            password: passwordConfig('新しいパスワード'),
+            password_confirmation: passwordConfig('新しいパスワードの確認')
         },
         formIsValid: false
     };
 
-    checkValidity(value: string, rules: any) {
-        let isValid = true;
-        if (!rules) {
-            return true;
-        }
-
-        if (rules.required) {
-            isValid = value.trim() !== '' && isValid;
-        }
-
-        if (rules.minLength) {
-            isValid = value.length >= rules.minLength && isValid
-        }
-
-        if (rules.maxLength) {
-            isValid = value.length <= rules.maxLength && isValid
-        }
-
-        if (rules.isEmail) {
-            const pattern = /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/;
-            isValid = pattern.test(value) && isValid
-        }
-
-        return isValid;
-    }
-
-
+    /**
+     * 送信したときの処理
+     * @param {<HTMLFormElement>} event
+     */
     submitHandler = ( event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
 
@@ -167,19 +66,20 @@ class editForm extends Component<any, any> {
             }
         }
 
-        const headers = {
-            headers: {
-                accessToken: this.props.auth.token,
-                uid: this.props.auth.uid,
-                client: this.props.auth.client
-            }
-        };
+        //認証にはヘッダーが必要
+        const headers = this.props.auth.headers;
 
+        /**
+         * device_auth_tokenの仕様上プロフィール編集とパスワード編集は別処理
+         * なので、別々のアクションにした
+         */
+        //プロフィール編集
         if(formData.name !== this.props.auth.currentUser.name || formData.email !== this.props.auth.currentUser.email) {
-            AuthAction.put(formData.name, formData.email, headers,this.props.history);
+            AuthDispatcher.put(formData.name, formData.email, {headers},this.props.history);
         }
+        //パスワード変更
         if(formData.password !== null && formData.password !== '') {
-            AuthAction.putPassword(formData.password, formData.password_confirmation, headers, this.props.history);
+            AuthDispatcher.putPassword(formData.password, formData.password_confirmation, {headers}, this.props.history);
         }
     };
 
@@ -196,32 +96,36 @@ class editForm extends Component<any, any> {
                     ...this.state.editForm[controlName],
                     touched: true,
                     value: event.target.value,
-                    valid: this.checkValidity(event.target.value, this.state.editForm[controlName].validation)
+                    valid: checkValidity(event.target.value, this.state.editForm[controlName].validation)
                 }
             };
             this.setState({editForm: updateControls});
         }
     };
 
+    /**
+     * アカウント削除処理
+     * 削除したあとはlogin画面に飛ばす
+     */
     deleteHandler(){
         const isDelete = confirm('本当に削除してよろしいですか？');
         if(isDelete) {
             axios.delete(`/auth`, {
-                headers: {
-                    accessToken: this.props.auth.token,
-                    uid: this.props.auth.uid,
-                    client:this.props.auth.client
-                }
+                headers: this.props.auth.headers
             });
-            AuthAction.logout();
+            AuthDispatcher.logout();
         }
     }
 
+    /**
+     * ログインしているが本人ではないユーザーの場合はリダイレクト
+     */
     componentDidMount() {
         if(this.props.auth.currentUser.id != this.props.match.params.id) {
             this.props.history.replace('/');
         }
     }
+
 
     render(){
         const formElementsArray = [];
@@ -251,6 +155,7 @@ class editForm extends Component<any, any> {
         return (
             <>
                 <div className={classes.EditForm}>
+                    <input style={{marginBottom: '20px'}} type={'file'} onChange={this.props.imageHandler} />
                     <form onSubmit={this.submitHandler}>
                         {form}
                         <Button click={() => {}} buttonType={button.Edit}>更新</Button>

@@ -1,7 +1,7 @@
-import AuthDispatcher from './authDispatcher';
-import actionTypes from './authActionTypes';
+import AuthDispatcher from '../dispatcher';
+import actionTypes from '../actionTypes';
 import axios from '../../axios-order';
-import FluxContainer from "../../fluxContainer";
+import friendDispatcher from "../friend/friendAction";
 
 const AuthActionCreators = {   //ActionCreators
 
@@ -17,14 +17,15 @@ const AuthActionCreators = {   //ActionCreators
     signUp(formData: {name: string, email: string, password: string, password_confirmation: string}) {
         this.authStart();
         axios.post( '/auth', formData )
-            .then( response => {
+            .then( (response: any) => {
+
                 localStorage.setItem('access-token', response.headers.accesstoken);
                 localStorage.setItem('uid', response.headers.uid);
                 localStorage.setItem('client', response.headers.client);
                 this.authSuccess(response);
                 this.checkAuthTimeout(parseInt(response.headers.expiry));
             } )
-            .catch( error => {
+            .catch( (error: any) => {
                 console.log(error);
                 this.authFail(error);
             } );
@@ -47,9 +48,9 @@ const AuthActionCreators = {   //ActionCreators
                 uid,
                 client
             },
-        }).then(res => {
-            this.authSuccess(res);
-        }).catch(error => {
+        }).then((response: any) => {
+            this.authSuccess(response);
+        }).catch((error: any) => {
             this.authEnd();
         });
     },
@@ -58,7 +59,7 @@ const AuthActionCreators = {   //ActionCreators
         this.authStart();
         const formData = {email, password};
         axios.post( '/auth/sign_in', formData )
-            .then( response => {
+            .then( (response: any) => {
                 localStorage.setItem('access-token', response.headers.accesstoken);
                 localStorage.setItem('uid', response.headers.uid);
                 localStorage.setItem('client', response.headers.client);
@@ -66,7 +67,7 @@ const AuthActionCreators = {   //ActionCreators
                 this.authSuccess(response);
                 this.checkAuthTimeout(parseInt(response.headers.expiry));
             })
-            .catch( error => {
+            .catch( (error: any) => {
                 console.log(error);
                 this.authFail(error);
             });
@@ -75,17 +76,17 @@ const AuthActionCreators = {   //ActionCreators
     put(name: string, email: string, headers: any, history: any) {
         this.authStart();
         axios.put(`/auth`, {
-            name,
-            email
-        },
+                name,
+                email
+            },
             headers,
-        ).then((response) => {
+        ).then((response: any) => {
             console.log(response);
             this.authSuccess(response);
             history.replace(`/users/${response.data.data.id}`);
-        }).catch(e => {
-            console.log(e);
-            this.authFail(e);
+        }).catch((error: any) => {
+            console.log(error);
+            this.authFail(error);
         });
     },
 
@@ -96,13 +97,24 @@ const AuthActionCreators = {   //ActionCreators
                 password_confirmation
             },
             headers,
-        ).then((response) => {
+        ).then((response: any) => {
             console.log(response);
             this.authSuccess(response);
             history.replace(`/users/${response.data.data.id}`);
-        }).catch(e => {
-            console.log(e);
-            this.authFail(e);
+        }).catch((error: any) => {
+            console.log(error);
+            this.authFail(error);
+        });
+    },
+
+    putImage(params: any, props: any){
+        axios.post(`/users/image`, params, {
+            headers: props.auth.headers
+        }).then((response: any) => {
+            console.log(response);
+            friendDispatcher.friendSuccess(response);
+        }).catch((error: any) => {
+
         });
     },
 
@@ -134,6 +146,7 @@ const AuthActionCreators = {   //ActionCreators
             type: actionTypes.AUTH_END,
         });
     },
+
 
 };
 

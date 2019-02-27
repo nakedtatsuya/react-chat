@@ -2,11 +2,10 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 
 import { Container } from 'flux/utils';
-import FluxContainer from './fluxContainer';
-import './index.css';
+import FluxContainer from './modules/fluxContainer';
 import * as serviceWorker from './serviceWorker';
 
-
+//flux管理コンテナー
 const AppContainer = Container.create(FluxContainer);
 
 ReactDOM.render(<AppContainer />, document.getElementById('root'));

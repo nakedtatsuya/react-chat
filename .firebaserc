@@ -1,0 +1,6 @@
+{
+  "projects": {
+    "y": "chat-react-rails-app",
+    "default": "chat-react-rails-app"
+  }
+}

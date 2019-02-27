@@ -1,27 +1,32 @@
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import HeaderLeft from '../../molecules/headerLeft/headerLeft';
 import HeaderRight from '../../molecules/headerRight/headerRight';
-import FluxContainer from "../../fluxContainer";
-import AuthAction from "../../modules/auth/authAction";
 const { withRouter } = require('react-router-dom');
 
 const classes = require('./header.css');
 
-const Header = (props: any) => {
+/**
+ * ヘッダー
+ * @param props
+ * @returns {any}
+ * @constructor
+ */
+class Header extends PureComponent<any>{
 
-    const user = FluxContainer.calculateState().auth.currentUser;
+    render(){
+        const {name, email, id} = this.props.auth.currentUser;
 
-
-    return (
-        <header className={classes.Header}>
-            <HeaderLeft />
-            <HeaderRight
-                name={user.name}
-                email={user.email}
-                uid={user.id}
-            />
-        </header>
-    );
-};
+        return (
+            <header className={classes.Header}>
+                <HeaderLeft />
+                <HeaderRight
+                    name={name}
+                    email={email}
+                    uid={id}
+                />
+            </header>
+        );
+    }
+}
 
 export default withRouter(Header);

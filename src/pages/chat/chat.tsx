@@ -2,134 +2,90 @@ import React, { Component } from 'react';
 import UserList from '../../organisms/userList/userList';
 import MessageBox from '../../organisms/messageBox/messageBox';
 import Header from '../../organisms/header/header';
-import axios from '../../axios-order';
-import FluxContainer from "../../fluxContainer";
-import AuthAction from "../../modules/auth/authAction";
-const { Link, withRouter } = require('react-router-dom');
+import FriendDispatcher from "../../modules/friend/friendAction";
+const { withRouter } = require('react-router-dom');
 
+/**
+ * chat画面コンテナー
+ * chat情報とfriend情報はflux管理
+ */
 class Chat extends Component<any, any> {
 
     state: any = {
-        userList: [],
-        chatList: [],
-        activeUser: 0,
-        value: ''
+        value: '',
     };
 
-    changeChatList = (id: number) => {
-        axios.get(`/messages/${id}`, {
-            headers: {
-                accessToken: this.props.auth.token,
-                uid: this.props.auth.uid,
-                client: this.props.auth.client,
-            }
-        }).then(response => {
-            this.setState({chatList: response.data,  activeUser: id})
-        });
-    };
-
+    /**
+     * 友達削除アクション
+     * @param {number} id
+     */
     deleteFriendHandler= (id: number) => {
         const isDelete = confirm('友達削除しますか？(トーク履歴は残ります)');
         if(isDelete) {
-            axios.delete(`/friendships/${id}`, {
-                headers: {
-                    accessToken: this.props.auth.token,
-                    uid: this.props.auth.uid,
-                    client: this.props.auth.client
-                }
-            }).then(response => {
-                const newUserList = this.state.userList.filter((user: any) => {
-                    return user.id !== id
-                });
-                this.setState({userList: newUserList, activeUser: newUserList[0].id});
-            })
+            FriendDispatcher.deleteFriend(id);
         }
     };
 
+    /**
+     * 画像送信アクション
+     * @param event
+     */
+    sendImageHandler = (event: any) => {
+        const params = new FormData();
+        const fileSelectDom = event.target.files[0];
+        params.append('image', fileSelectDom);
+        FriendDispatcher.postImageMessage(params);
+    };
+
+    /**
+     * メッセージ送信アクション
+     * @param event
+     */
     sendMessageHandler = (event: any) => {
         event.preventDefault();
-        axios.post('/messages', {
-            message: this.state.value,
-            to_id: this.state.activeUser,
-            from_id: this.props.auth.currentUser.id
-        }, {
-            headers: {
-                accessToken: this.props.auth.token,
-                uid: this.props.auth.uid,
-                client: this.props.auth.client
-            }
-        }).then((response: any) => {
-            const newMessageList = this.state.chatList.concat(response.data);
-            this.setState({chatList: newMessageList, value: ''});
-        });
+        //空文字送信バリデーション
+        if(this.state.value === null || this.state.value === '') {
+            return;
+        }
+        FriendDispatcher.postMessage(this.state.value);
+        //送信後はinputをリセット
+        this.setState({value: ''});
     };
 
+    /**
+     * 入力されるたびにvalue更新
+     * @param event
+     */
     changeMessageHandler = (event: any) => {
       this.setState({value: event.target.value});
-      console.log(event.target.value);
     };
 
+    /**
+     * 初回ロード時は友達リスト取得
+     * リストの先頭をアクティブユーザーとして表示
+     */
     componentDidMount() {
-        axios.get('/users/friends', {
-            headers: {
-                accessToken: this.props.auth.token,
-                uid: this.props.auth.uid,
-                client: this.props.auth.client,
-            }
-        }).then(response => {
-            if(response.data.length > 0) {
-                this.setState({
-                    userList: response.data,
-                    activeUser: response.data[0].id
-                });
-
-                //リファクタする
-                axios.get(`/messages/${response.data[0].id}`, {
-                    headers: {
-                        accessToken: this.props.auth.token,
-                        uid: this.props.auth.uid,
-                        client: this.props.auth.client,
-                    }
-                }).then(response => {
-                    console.log(response);
-                    this.setState({chatList: response.data})
-                })
-            }
-        }).catch(e => {
-            console.log(e);
-        });
+        FriendDispatcher.friendList();
     }
 
-    componentWillReceiveProps(nextProps: any) {
-        axios.get(`/messages/${this.state.activeUser}`, {
-            headers: {
-                accessToken: this.props.auth.token,
-                uid: this.props.auth.uid,
-                client: this.props.auth.client,
-            }
-        }).then(response => {
-            console.log(response);
-            this.setState({chatList: response.data})
-        });
-    }
-
+    /**
+     * 友達リストとチャットリストでコンポーネント分け
+     * @returns {any}
+     */
     render() {
         return (
             <>
-                <Header
-                    name={this.props.auth.name}
-                    email={this.props.auth.email}
-                    uid={this.props.auth.id}
-                />
+                <Header {...this.props} />
                 <div>
-                    <UserList change={this.changeChatList} activeUser={this.state.activeUser} userList={this.state.userList} click={this.deleteFriendHandler} />
+                    <UserList activeUser={this.props.friend.activeUserId} userList={this.props.friend.friendList} click={this.deleteFriendHandler} />
                     <MessageBox
                         value={this.state.value}
                         inputHandler={this.changeMessageHandler}
                         formHandler={this.sendMessageHandler}
-                        sendId={this.state.activeUser}
-                        chatList={this.state.chatList}
+                        sendId={this.props.friend.activeUserId}
+                        chatList={this.props.friend.chatList}
                         currentId={this.props.auth.currentUser.id}
+                        imageHandler={this.sendImageHandler}
                     />
                 </div>
             </>

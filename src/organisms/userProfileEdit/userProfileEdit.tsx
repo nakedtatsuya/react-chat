@@ -5,6 +5,11 @@ import EditForm from '../FormBox/editForm/editForm';
 
 const classes = require('./userProfileEdit.css');
 
+/**
+ * edit画面コンテナー
+ * @param props
+ * @returns {any}
+ */
 const userProfileEdit = (props: any) => {
     return (
         <div className={classes.EditWrapper}>

@@ -4,9 +4,13 @@ import SearchUserList from '../../organisms/searchUserList/searchUserList';
 import ChatSearchLogo from '../../molecules/chatSearchLogo/chatSearchLogo';
 import Header from '../../organisms/header/header';
 import axios from "../../axios-order";
+import FriendDispatcher from "../../modules/friend/friendAction";
 
 const { withRouter } = require('react-router-dom');
 
+/**
+ * ユーザー検索コンテナー
+ */
 class Search extends Component<any, any> {
 
     state = {
@@ -14,21 +18,21 @@ class Search extends Component<any, any> {
       userList: []
     };
 
+    /**
+     * 検索タブに入力されるたびにユーザーを検索
+     * @param event
+     */
     inputChangeHandler = (event: any) => {
          this.setState({value: event.target.value});
          if(event.target.value !== null && event.target.value !== '') {
-             //Like検索 %name%
+             //Like検索 %name% クエリパラメーターで送ってみた
              axios.get(`/users?name=${event.target.value}`,{
-                 headers: {
-                     accessToken: this.props.auth.token,
-                     uid: this.props.auth.uid,
-                     client: this.props.auth.client
-                 }
+                 headers: this.props.auth.headers
              })
-             .then(result => {
+             .then((result: any) => {
                  this.setState({userList: result.data});
-             }).catch(e => {
-                 console.log(e)
+             }).catch((error: any) => {
+                 console.log(error);
              })
          }else {
              //なにも入力がない時は空にセット
@@ -36,45 +40,39 @@ class Search extends Component<any, any> {
          }
     };
 
+    //formアクションは何も起こさない
     submitHandler = (event: any) => {
         event.preventDefault();
     };
 
+    /**
+     * 検索ユーザーのクリックアクション
+     * 友達リストに追加してchat画面にリダイレクト
+     * @param {number} id ユーザーID
+     */
     addFriendHandler = (id: number) => {
-      axios.post('/friendships', {
-          from_user_id: this.props.auth.currentUser.id,
-          to_user_id: id
-
-      }, {
-          headers: {
-              accessToken: this.props.auth.token,
-              uid: this.props.auth.uid,
-              client: this.props.auth.client
-          }
-      }).then(response => {
+        FriendDispatcher.addFriend(id);
         this.props.history.replace('/');
-      })
     };
-
 
     render() {
         return (
             <>
-                <Header/>
+                <Header {...this.props} />
                 <div id={classes.SearchContainer}>
                     <div className={classes.Search}>
                         <ChatSearchLogo />
                         <form onSubmit={this.submitHandler}>
-                        <input
-                            onChange={this.inputChangeHandler}
-                            type="text" className={classes.SearchInput}
-                            placeholder="ユーザー名で検索しよう"
-                        />
+                            <input
+                                onChange={this.inputChangeHandler}
+                                type="text" className={classes.SearchInput}
+                                placeholder="ユーザー名で検索しよう"
+                            />
                         </form>
                         <SearchUserList
                             click={this.addFriendHandler}
                             userList={this.state.userList}
-                            currentUserId={this.props.auth.currentUser.id}
+                            currentUser={this.props.auth.currentUser}
                         />
                     </div>
                 </div>

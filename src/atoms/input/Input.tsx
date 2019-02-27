@@ -2,6 +2,11 @@ import React from 'react';
 
 const classes = require('./Input.css');
 
+/**
+ * インプットタグを汎用的に使える
+ * @param props
+ * @returns {any}
+ */
 const input = ( props: any ) => {
     let inputElement = null;
     const inputClasses = [classes.FormControl];
