@@ -18,6 +18,8 @@ class AuthStore extends ReduceStore<any, any> {
             loading: false,
             isLoggedIn: false,
             currentUser: null,
+            authCheckLoading: false,
+            success: null
         }; //stateの初期値を定義
     }
 
@@ -36,6 +38,9 @@ class AuthStore extends ReduceStore<any, any> {
             case actionTypes.AUTH_END:
                 console.log(actionTypes.AUTH_END);
                 return authEnd(state);
+            case actionTypes.AUTH_CHECK_START:
+                console.log(actionTypes.AUTH_CHECK_START);
+                return authCheckStart(state);
             default:
                 return state;
         }
@@ -46,8 +51,12 @@ const authStart = (state: any) => {
     return updateObject(state, {error: null, loading: true});
 };
 
+const authCheckStart = (state: any) => {
+    return updateObject(state, {error: null, authCheckLoading: true});
+};
+
 const authEnd = (state: any) => {
-    return updateObject(state, {error: null, loading: false});
+    return updateObject(state, {error: null, loading: false, authCheckLoading: false});
 };
 
 const authSuccess = (state: any, action: any) => {
@@ -60,7 +69,9 @@ const authSuccess = (state: any, action: any) => {
         error: null,
         loading: false,
         isLoggedIn: true,
-        currentUser: action.currentUser
+        currentUser: action.currentUser,
+        authCheckLoading: false,
+        success: action.success
     });
 };
 

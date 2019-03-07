@@ -17,11 +17,11 @@ class User extends Component<any, any> {
      * formからdataを変換して送信
      */
     sendImageHandler = (event: any) => {
-        const params = new FormData();
-        const fileSelectDom = event.target.files[0];
-        params.append('image', fileSelectDom);
-        AuthDispatcher.putImage(params, this.props);
-        this.props.history.push(`/users/${this.props.auth.currentUser.id}`)
+        // const params = new FormData();
+        // const fileSelectDom = event.target.files[0];
+        // params.append('image', fileSelectDom);
+        // AuthDispatcher.putImage(params, this.props);
+        // this.props.history.push(`/users/${this.props.auth.currentUser.id}`)
     };
 
     /**

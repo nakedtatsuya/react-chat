@@ -27,13 +27,14 @@ const FriendActionCreators = {   //ActionCreators
      * ユーザー詳細更新
      * @param response
      */
-    friendSuccess(response: any) {
+    friendSuccess(response: any, success: string|null = null) {
         FriendDispatcher.dispatch({
             type: actionTypes.FRIEND_SUCCESS,
             id: response.data.id,
             name: response.data.name,
             email: response.data.email,
-            image: response.data.image.url
+            image: response.data.image.url,
+            success: success
         });
     },
     /**
@@ -54,6 +55,7 @@ const FriendActionCreators = {   //ActionCreators
         axios.get('/users/friends', {
             headers: FluxContainer.calculateState().auth.headers
         }).then((friendResponse: any) => {
+            console.log(friendResponse);
             if(friendResponse.data.length > 0) {
                 this.defaultChatPage(friendResponse.data);
             }
@@ -70,6 +72,7 @@ const FriendActionCreators = {   //ActionCreators
         axios.get(`/messages/${newFriendList[0].id}`, {
             headers: FluxContainer.calculateState().auth.headers
         }).then((chatResponse: any) => {
+            console.log(chatResponse);
             this.listSuccess(newFriendList, chatResponse);
         }).catch((error: any) => {
             console.log(error);

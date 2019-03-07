@@ -11,9 +11,9 @@ class App extends Component<any, any> {
 
   render(){
 
-      const {loading, isLoggedIn} = this.props.auth;
+      const {authCheckLoading, isLoggedIn} = this.props.auth;
         //認証ロード中はスピナー表示
-      if(loading) {
+      if(authCheckLoading) {
           return (
               <div className={classes.App}>
                   <Spinner />

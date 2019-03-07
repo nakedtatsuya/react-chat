@@ -19,7 +19,8 @@ class FriendStore extends ReduceStore<any, any> {
             chatList: [],
             loading: false,
             error: null,
-            activeUserId: 0
+            activeUserId: 0,
+            success: null
         };
     }
 
@@ -51,7 +52,8 @@ const friendSuccess = (state: any, action: any) => {
         email: action.email,
         image: action.image,
         loading: false,
-        error: null
+        error: null,
+        success: action.success
     });
 };
 
@@ -65,7 +67,8 @@ const friendFresh = (state: any, action: any) => {
         chatList: [],
         loading: false,
         error: null,
-        activeUserId: 0
+        activeUserId: 0,
+        success: null
     });
 };
 

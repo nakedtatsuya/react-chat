@@ -4,7 +4,7 @@ import MessageBox from '../../organisms/messageBox/messageBox';
 import Header from '../../organisms/header/header';
 import FriendDispatcher from "../../modules/friend/friendAction";
 const { withRouter } = require('react-router-dom');
-
+const classes = require('./chat.css');
 /**
  * chat画面コンテナー
  * chat情報とfriend情報はflux管理
@@ -13,6 +13,7 @@ class Chat extends Component<any, any> {
 
     state: any = {
         value: '',
+        flashShow: true
     };
 
     /**
@@ -60,6 +61,11 @@ class Chat extends Component<any, any> {
       this.setState({value: event.target.value});
     };
 
+    flashCloseHandler = () => {
+        this.props.auth.success = null;
+        this.setState({flashShow: false})
+    };
+
     /**
      * 初回ロード時は友達リスト取得
      * リストの先頭をアクティブユーザーとして表示
@@ -73,9 +79,25 @@ class Chat extends Component<any, any> {
      * @returns {any}
      */
     render() {
+
+        let flash = null;
+
+        if(this.props.auth.success && this.state.flashShow) {
+            flash = (
+                <div className={classes.flash}>
+                    <button onClick={this.flashCloseHandler} aria-label="close" className={classes.close} data-dismiss="alert">
+                        ×
+                    </button>
+                    <p>{this.props.auth.success}</p>
+                </div>
+            );
+        }
+
+
         return (
             <>
                 <Header {...this.props} />
+                {flash}
                 <div>
                     <UserList activeUser={this.props.friend.activeUserId} userList={this.props.friend.friendList} click={this.deleteFriendHandler} />
                     <MessageBox

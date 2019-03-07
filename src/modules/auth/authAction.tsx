@@ -22,12 +22,12 @@ const AuthActionCreators = {   //ActionCreators
                 localStorage.setItem('access-token', response.headers.accesstoken);
                 localStorage.setItem('uid', response.headers.uid);
                 localStorage.setItem('client', response.headers.client);
-                this.authSuccess(response);
+                this.authSuccess(response, 'ChatAppへようこそ！早速、ユーザーを探してチャットを始めよう！');
                 this.checkAuthTimeout(parseInt(response.headers.expiry));
             } )
             .catch( (error: any) => {
-                console.log(error);
-                this.authFail(error);
+                console.log(error.response.data.errors.full_messages);
+                this.authFail(error.response.data.errors.full_messages);
             } );
     },
 
@@ -38,7 +38,7 @@ const AuthActionCreators = {   //ActionCreators
     },
 
     authCheckState() {
-        this.authStart();
+        this.authCheckStart();
         const accessToken = localStorage.getItem('access-token');
         const uid = localStorage.getItem('uid');
         const client = localStorage.getItem('client');
@@ -64,12 +64,12 @@ const AuthActionCreators = {   //ActionCreators
                 localStorage.setItem('uid', response.headers.uid);
                 localStorage.setItem('client', response.headers.client);
 
-                this.authSuccess(response);
+                this.authSuccess(response, 'ログインしました！');
                 this.checkAuthTimeout(parseInt(response.headers.expiry));
             })
             .catch( (error: any) => {
-                console.log(error);
-                this.authFail(error);
+                console.log(error.response.data.errors[0]);
+                this.authFail(error.response.data.errors);
             });
     },
 
@@ -77,15 +77,14 @@ const AuthActionCreators = {   //ActionCreators
         this.authStart();
         axios.put(`/auth`, {
                 name,
-                email
+                email,
             },
             headers,
         ).then((response: any) => {
             console.log(response);
-            this.authSuccess(response);
+            this.authSuccess(response, 'プロフィールを更新しました');
             history.replace(`/users/${response.data.data.id}`);
         }).catch((error: any) => {
-            console.log(error);
             this.authFail(error);
         });
     },
@@ -99,22 +98,25 @@ const AuthActionCreators = {   //ActionCreators
             headers,
         ).then((response: any) => {
             console.log(response);
-            this.authSuccess(response);
+            this.authSuccess(response, 'プロフィールを更新しました');
             history.replace(`/users/${response.data.data.id}`);
         }).catch((error: any) => {
-            console.log(error);
-            this.authFail(error);
+            console.log(error.response.data.errors.full_messages);
+            this.authFail(error.response.data.errors.full_messages);
         });
     },
 
     putImage(params: any, props: any){
-        axios.post(`/users/image`, params, {
+        axios.put(`/users/image`, params, {
             headers: props.auth.headers
         }).then((response: any) => {
             console.log(response);
-            friendDispatcher.friendSuccess(response);
+            this.authSuccess(response, 'プロフィールを更新しました');
+            //friendDispatcher.friendSuccess(response);
+            props.history.replace(`/users/${response.data.data.id}`);
         }).catch((error: any) => {
-
+            console.log(error.response.data);
+            this.authFail(error.response.data.errors.full_messages);
         });
     },
 
@@ -124,13 +126,20 @@ const AuthActionCreators = {   //ActionCreators
         });
     },
 
-    authSuccess(response: any) {
+    authCheckStart() {
+        AuthDispatcher.dispatch({
+            type: actionTypes.AUTH_CHECK_START,
+        });
+    },
+
+    authSuccess(response: any, success: string|null = null) {
         AuthDispatcher.dispatch({
             type: actionTypes.AUTH_SUCCESS,
             token: response.headers.accesstoken,
             uid: response.headers.uid,
             client: response.headers.client,
-            currentUser: response.data.data
+            currentUser: response.data.data,
+            success: success
         });
     },
 
@@ -146,7 +155,6 @@ const AuthActionCreators = {   //ActionCreators
             type: actionTypes.AUTH_END,
         });
     },
-
 
 };
 

@@ -138,9 +138,10 @@ class SignupForm extends Component<any, State> {
         let errorMessage = null;
 
         if (this.props.auth.error) {
-            errorMessage = (
-                <p style={{color: 'red'}}>{this.props.auth.error.message}</p>
-            );
+            errorMessage = this.props.auth.error.map((err: string) => {
+                return  <p key={err} style={{color: 'red'}}>{err}</p>;
+            });
+            this.props.auth.error = null;
         }
 
         return (

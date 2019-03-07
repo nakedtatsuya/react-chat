@@ -69,13 +69,25 @@ class editForm extends Component<any, any> {
         //認証にはヘッダーが必要
         const headers = this.props.auth.headers;
 
+        const image: any = document.querySelector('input');
+
+        const params = new FormData();
+        params.append('name', formData.name);
+        params.append('email', formData.email);
+        const fileSelectDom = image.files[0];
+
+        const isChangeImage = fileSelectDom !== null && fileSelectDom !== undefined;
+        if(isChangeImage) {
+            params.append('image', fileSelectDom);
+        }
+
         /**
          * device_auth_tokenの仕様上プロフィール編集とパスワード編集は別処理
          * なので、別々のアクションにした
          */
         //プロフィール編集
-        if(formData.name !== this.props.auth.currentUser.name || formData.email !== this.props.auth.currentUser.email) {
-            AuthDispatcher.put(formData.name, formData.email, {headers},this.props.history);
+        if(isChangeImage || formData.name !== this.props.auth.currentUser.name || formData.email !== this.props.auth.currentUser.email) {
+            AuthDispatcher.putImage(params, this.props);
         }
         //パスワード変更
         if(formData.password !== null && formData.password !== '') {
@@ -152,9 +164,19 @@ class editForm extends Component<any, any> {
             ))
         );
 
+        let errorMessage = null;
+
+        if (this.props.auth.error) {
+            errorMessage = this.props.auth.error.map((err: string) => {
+                return  <p key={err} style={{color: 'red'}}>{err}</p>;
+            });
+            this.props.auth.error = null;
+        }
+
         return (
             <>
                 <div className={classes.EditForm}>
+                    {errorMessage}
                     <input style={{marginBottom: '20px'}} type={'file'} onChange={this.props.imageHandler} />
                     <form onSubmit={this.submitHandler}>
                         {form}

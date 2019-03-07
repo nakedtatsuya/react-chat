@@ -8,7 +8,7 @@ import Input from "../../../atoms/input/Input";
 import Spinner from '../../../atoms/Spinner/Spinner';
 import AuthDispatcher from "../../../modules/auth/authAction";
 import {checkValidity, emailConfig, passwordConfig} from '../../../modules/utility';
-
+const FlashMessage = require('react-flash-message');
 
 interface LoginForm {
     email: ControlConfig,
@@ -132,9 +132,12 @@ class loginForm extends Component<any, State> {
         let errorMessage = null;
 
         if (this.props.auth.error) {
-            errorMessage = (
-              <p style={{color: 'red'}}>{this.props.auth.error.message}</p>
-            );
+            errorMessage = this.props.auth.error.map((err: string) => {
+                return (
+                    <p key={err} style={{color: 'red'}}>{err}</p>
+                );
+            });
+            this.props.auth.error = null;
         }
 
         return (
