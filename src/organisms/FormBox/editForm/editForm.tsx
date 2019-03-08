@@ -77,6 +77,9 @@ class editForm extends Component<any, any> {
         const fileSelectDom = image.files[0];
 
         const isChangeImage = fileSelectDom !== null && fileSelectDom !== undefined;
+        const isChangeName = formData.name !== this.props.auth.currentUser.name;
+        const isChangeEmail = formData.email !== this.props.auth.currentUser.email;
+        const isChangePassword = formData.password !== '';
         if(isChangeImage) {
             params.append('image', fileSelectDom);
         }
@@ -86,13 +89,13 @@ class editForm extends Component<any, any> {
          * なので、別々のアクションにした
          */
         //プロフィール編集
-        if(isChangeImage || formData.name !== this.props.auth.currentUser.name || formData.email !== this.props.auth.currentUser.email) {
-            AuthDispatcher.putImage(params, this.props);
+        if(isChangeImage || isChangeName || isChangeEmail || isChangePassword) {
+            AuthDispatcher.putImage(params, this.props, formData.password, formData.password_confirmation);
         }
         //パスワード変更
-        if(formData.password !== null && formData.password !== '') {
-            AuthDispatcher.putPassword(formData.password, formData.password_confirmation, {headers}, this.props.history);
-        }
+        // if(isChangePassword) {
+        //     AuthDispatcher.putPassword(formData.password, formData.password_confirmation, {headers}, this.props.history);
+        // }
     };
 
     /**

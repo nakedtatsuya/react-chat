@@ -73,21 +73,22 @@ const AuthActionCreators = {   //ActionCreators
             });
     },
 
-    put(name: string, email: string, headers: any, history: any) {
-        this.authStart();
-        axios.put(`/auth`, {
-                name,
-                email,
-            },
-            headers,
-        ).then((response: any) => {
-            console.log(response);
-            this.authSuccess(response, 'プロフィールを更新しました');
-            history.replace(`/users/${response.data.data.id}`);
-        }).catch((error: any) => {
-            this.authFail(error);
-        });
-    },
+    // put(name: string, email: string, headers: any, history: any) {
+    //     this.authStart();
+    //     axios.put(`/auth`, {
+    //             name,
+    //             email,
+    //         },
+    //         headers,
+    //     ).then((response: any) => {
+    //
+    //         console.log(response);
+    //         this.authSuccess(response, 'プロフィールを更新しました');
+    //         history.replace(`/users/${response.data.data.id}`);
+    //     }).catch((error: any) => {
+    //         this.authFail(error);
+    //     });
+    // },
 
     putPassword(password: string, password_confirmation: string, headers: any, history: any) {
         this.authStart();
@@ -106,18 +107,78 @@ const AuthActionCreators = {   //ActionCreators
         });
     },
 
-    putImage(params: any, props: any){
-        axios.put(`/users/image`, params, {
+    async putImage(params: any, props: any, password: string, password_confirmation: string){
+        let failErrors: any = null;
+        let successResponse: any = null;
+        const oldName: any = props.auth.currentUser.name;
+        const oldEmail: any = props.auth.currentUser.email;
+        const oldImage: any = props.auth.currentUser.image;
+        await axios.put(`/users/image`, params, {
             headers: props.auth.headers
         }).then((response: any) => {
+            localStorage.setItem('uid', response.headers.uid);
             console.log(response);
-            this.authSuccess(response, 'プロフィールを更新しました');
-            //friendDispatcher.friendSuccess(response);
-            props.history.replace(`/users/${response.data.data.id}`);
+            successResponse = response;
         }).catch((error: any) => {
             console.log(error.response.data);
-            this.authFail(error.response.data.errors.full_messages);
+            failErrors = error.response.data.errors.full_messages;
+            this.authFail(failErrors);
         });
+        //name/emailでエラーが出たらパスワード処理は行わない。
+        if(failErrors) return;
+
+        if(password !== '') {
+            await axios.put(`/auth/password`, {
+                    password,
+                    password_confirmation
+                },
+                {
+                    headers: {
+                        accessToken: localStorage.getItem('access-token'),
+                        uid: localStorage.getItem('uid'),
+                        client: localStorage.getItem('client'),
+                    }
+                },
+            ).then((response: any) => {
+                console.log(response);
+                successResponse = response;
+            }).catch((error: any) => {
+                console.log(error.response.data);
+                if(failErrors !== null){
+                    failErrors = failErrors.concat(error.response.data.errors.full_messages);
+                    console.log(failErrors);
+                }else {
+                    failErrors = error.response.data.errors.full_messages;
+                }
+            });
+        }
+
+        if(!failErrors) {
+            this.authSuccess(successResponse, 'プロフィールを更新しました');
+            props.history.replace(`/users/${successResponse.data.data.id}`);
+        }else if(successResponse){
+            //ロールバック
+            params.append('name', oldName);
+            params.append('email', oldEmail);
+            params.append('image', oldImage);
+            await axios.put(`/users/image`, params, {
+                headers: {
+                    accessToken: localStorage.getItem('access-token'),
+                    uid: localStorage.getItem('uid'),
+                    client: localStorage.getItem('client'),
+                }
+            }).then((response: any) => {
+                localStorage.setItem('uid', response.headers.uid);
+                console.log(response);
+                successResponse = null;
+            }).catch((error: any) => {
+                console.log(error.response.data);
+            });
+            this.authFail(failErrors);
+        }else {
+            this.authFail(failErrors);
+        }
+
     },
 
     authStart() {
